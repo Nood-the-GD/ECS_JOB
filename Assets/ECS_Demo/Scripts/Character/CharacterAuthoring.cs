@@ -14,9 +14,25 @@ public struct CharacterMoveSpeed : IComponentData
     public float Value;
 }
 
+public struct CharacterMaxHP : IComponentData
+{
+    public int Value;
+}
+
+public struct CharacterCurrentHP : IComponentData
+{
+    public int Value;
+}
+
+public struct DamageThisFrame : IBufferElementData
+{
+    public int Value;
+}
+
 public class CharacterAuthoring : MonoBehaviour
 {
     public float MoveSpeed = 10f;
+    public int MaxHP = 100;
 
     private class Baker : Baker<CharacterAuthoring>
     {
@@ -29,6 +45,11 @@ public class CharacterAuthoring : MonoBehaviour
             {
                 Value = authoring.MoveSpeed
             });
+            AddComponent(entity, new CharacterMaxHP { Value = authoring.MaxHP });
+            AddComponent(entity, new CharacterCurrentHP { Value = authoring.MaxHP });
+            AddBuffer<DamageThisFrame>(entity);
+            AddComponent<DestroyEntityFlag>(entity);
+            SetComponentEnabled<DestroyEntityFlag>(entity, false);
         }
     }
 }

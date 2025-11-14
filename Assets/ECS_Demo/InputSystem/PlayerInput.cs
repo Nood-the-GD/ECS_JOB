@@ -100,6 +100,24 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Mouse"",
+                    ""type"": ""Value"",
+                    ""id"": ""1cf4768d-3c7f-4333-9643-194c4ce993af"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MousePress"",
+                    ""type"": ""Button"",
+                    ""id"": ""31850b09-52c9-4ec1-b06a-0e76168d0c2d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -212,6 +230,28 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dca953af-21d9-4a36-a64d-6b36202216dc"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mouse"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3aff40fc-274a-4d61-a842-12a7d36c820f"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MousePress"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -221,6 +261,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         // PlayerInputMap
         m_PlayerInputMap = asset.FindActionMap("PlayerInputMap", throwIfNotFound: true);
         m_PlayerInputMap_Move = m_PlayerInputMap.FindAction("Move", throwIfNotFound: true);
+        m_PlayerInputMap_Mouse = m_PlayerInputMap.FindAction("Mouse", throwIfNotFound: true);
+        m_PlayerInputMap_MousePress = m_PlayerInputMap.FindAction("MousePress", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
@@ -302,6 +344,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_PlayerInputMap;
     private List<IPlayerInputMapActions> m_PlayerInputMapActionsCallbackInterfaces = new List<IPlayerInputMapActions>();
     private readonly InputAction m_PlayerInputMap_Move;
+    private readonly InputAction m_PlayerInputMap_Mouse;
+    private readonly InputAction m_PlayerInputMap_MousePress;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerInputMap".
     /// </summary>
@@ -317,6 +361,14 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerInputMap/Move".
         /// </summary>
         public InputAction @Move => m_Wrapper.m_PlayerInputMap_Move;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerInputMap/Mouse".
+        /// </summary>
+        public InputAction @Mouse => m_Wrapper.m_PlayerInputMap_Mouse;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerInputMap/MousePress".
+        /// </summary>
+        public InputAction @MousePress => m_Wrapper.m_PlayerInputMap_MousePress;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -346,6 +398,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
+            @Mouse.started += instance.OnMouse;
+            @Mouse.performed += instance.OnMouse;
+            @Mouse.canceled += instance.OnMouse;
+            @MousePress.started += instance.OnMousePress;
+            @MousePress.performed += instance.OnMousePress;
+            @MousePress.canceled += instance.OnMousePress;
         }
 
         /// <summary>
@@ -360,6 +418,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
+            @Mouse.started -= instance.OnMouse;
+            @Mouse.performed -= instance.OnMouse;
+            @Mouse.canceled -= instance.OnMouse;
+            @MousePress.started -= instance.OnMousePress;
+            @MousePress.performed -= instance.OnMousePress;
+            @MousePress.canceled -= instance.OnMousePress;
         }
 
         /// <summary>
@@ -407,5 +471,19 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Mouse" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMouse(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MousePress" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMousePress(InputAction.CallbackContext context);
     }
 }

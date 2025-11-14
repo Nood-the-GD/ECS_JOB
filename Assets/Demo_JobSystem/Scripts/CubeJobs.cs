@@ -175,51 +175,6 @@ public struct CalculateTargetSeekJob : IJobParallelFor
         allCube[index] = cubeJobItemData;
     }
 }
-// [BurstCompile]
-// public struct GetNearbyCubesJob : IJobParallelFor
-// {
-//     public NativeArray<CubeJobItemData> allCube;
-//     [WriteOnly]
-//     public NativeArray<NearbyCubesData> nearbyCubesIndices;
-//     [ReadOnly]
-//     public float radius;
-
-//     public GetNearbyCubesJob(NativeArray<CubeJobItemData> allCube, float radius)
-//     {
-//         this.allCube = allCube;
-//         this.radius = radius;
-//     }
-
-//     [BurstCompile]
-//     public void Execute(int index)
-//     {
-//         var cubeJobItemData = allCube[index];
-//         int nearbyCount = 0;
-//         int startIndex = 0; // Mỗi cube có tối đa 10 nearby cubes
-//         int endIndex = 0;
-//         int[] nearbyCubesIndicesArray = new int[10];
-
-//         for (int i = 0; i < allCube.Length && nearbyCount < 10; i++)
-//         {
-//             var cube = allCube[i];
-//             if (cube.Index == cubeJobItemData.Index) continue;
-//             float distance = Vector3.Distance(cube.Position, cubeJobItemData.Position);
-//             if (distance <= radius)
-//             {
-//                 nearbyCubesIndicesArray[nearbyCount] = i;
-//                 nearbyCount++;
-//                 endIndex = i;
-//                 // nearbyCubesIndices[index].Add(i);
-//             }
-//         }
-
-//         cubeJobItemData.NearbyCubesCount = nearbyCount;
-//         cubeJobItemData.NearbyCubesStartIndex = startIndex;
-//         cubeJobItemData.NearbyCubesEndIndex = endIndex;
-//         CubeJobManager.Instance.UpdateNearbyCubesIndices(index, nearbyCubesIndicesArray);
-//         allCube[index] = cubeJobItemData;
-//     }
-// }
 [BurstCompile]
 public struct CalculateNewPosJob : IJobParallelFor
 {
@@ -301,34 +256,28 @@ public struct ShouldStopJob : IJobParallelFor
         }
 
         NativeList<int> nearbyCubesIndices = new NativeList<int>(Allocator.Temp);
-        for (int i = 0; i < allCube.Length; i++)
+        bool isAnyArrive = false;
+        int idx = 0;
+        foreach (var cube in allCube)
         {
-            var cube = allCube[i];
-            if (cube.Index == cubeJobItemData.Index) continue;
+            if (cube.Index == cubeJobItemData.Index)
+            {
+                idx++;
+                continue;
+            }
             float distance = Vector3.Distance(cube.Position, cubeJobItemData.Position);
             if (distance <= radius)
             {
-                nearbyCubesIndices.Add(i);
+                nearbyCubesIndices.Add(idx);
             }
-        }
+            idx++;
 
-        bool isAnyArrive = false;
-        for (int i = 0; i < nearbyCubesIndices.Length; i++)
-        {
-            int nearbyIndex = nearbyCubesIndices[startIndex + i];
-            var nearbyCube = allCube[nearbyIndex];
-            if (nearbyCube.IsArrived && nearbyCube.Index != index)
+            if (cube.IsArrived && cube.Index != index)
             {
                 isAnyArrive = true;
-                break;
             }
-        }
 
-        for (int i = 0; i < nearbyCubesIndices.Length; i++)
-        {
-            int nearbyIndex = nearbyCubesIndices[startIndex + i];
-            var nearbyCube = allCube[nearbyIndex];
-            var distanceToNearbyCube = Vector3.Distance(cubeJobItemData.Position, nearbyCube.Position);
+            var distanceToNearbyCube = Vector3.Distance(cubeJobItemData.Position, cube.Position);
             if (distanceToNearbyCube <= scanDistance && isAnyArrive)
             {
                 cubeJobItemData.IsShouldStop = true;
@@ -336,24 +285,9 @@ public struct ShouldStopJob : IJobParallelFor
                 return;
             }
         }
+
         cubeJobItemData.IsShouldStop = false;
 
         allCube[index] = cubeJobItemData;
     }
 }
-// [BurstCompile]
-// public class UpdateCubeJobDataJob : IJobParallelFor
-// {
-//     public NativeArray<CubeJobItemData> allCube;
-
-//     public UpdateCubeJobDataJob(NativeArray<CubeJobItemData> allCube, )
-//     {
-//         this.allCube = allCube;
-//     }
-
-//     [BurstCompile]
-//     public void Execute(int index)
-//     {
-
-//     }
-// }
